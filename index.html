@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Official Jokes</title>
+</head>
+<body>
+    <main id="main">
+        <h1>Dad Jokes</h1>
+        <p>Enter a type or click submit for random joke</p>
+        <form>
+            <input type="search" class="search" id="search">
+            <button id="submit">Submit</button>
+        </form>        
+        <div class="output" id="output">
+            <p class="setup" id="setup"></p>
+            <p class="punchline" id="punchline"></p>
+        </div>
+    </main>
+    <script>
+        const search = document.getElementById('search');
+        const submit = document.getElementById('submit');
+        const output = document.getElementById('output');   
+       const setup = document.getElementById('setup');
+       const punchline = document.getElementById('punchline');
+
+        submit.addEventListener('click', sendRequest);
+
+        function sendRequest(event) {
+             event.preventDefault();//In form button does post operation that is why use prevent default to stop it from submission or dont use form 
+            setup.innerHTML = ' ';
+            punchline.innerHTML = ' ';
+           
+             let value = search.value;
+            search.value = '';
+            submit.setAttribute('disabled', 'true');
+
+                if (value !== '') {           
+                fetch("https://official-joke-api.appspot.com/jokes/" + value + "/random").then( (response) => {
+                return response.json();
+                }).then( (data) => {
+                setup.innerHTML = data[0].setup;
+                setTimeout(function() {
+                    punchline.innerHTML = data[0].punchline;
+                    submit.removeAttribute('disabled');}, 4000);  //disable removed as soon as punchline hits 
+                }).catch( (err) => {
+                    punchline.style.color = 'red';
+                punchline.innerHTML = 'Try a different type.'
+                })            
+                } else {
+                fetch("https://official-joke-api.appspot.com/jokes/random").then( (response) => {
+                return response.json();
+                }).then( (data) => {
+                setup.innerHTML = data.setup;
+                setTimeout(function() {
+                    punchline.innerHTML = data.punchline;
+                    submit.removeAttribute('disabled');}, 4000);  
+               
+                }).catch( (err) => {
+                punchline.style.color = 'red';
+                punchline.innerHTML = 'Try a different type.'
+                })          
+                }
+                           
+            }       
+    </script>
+</body>
+</html>
